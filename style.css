@@ -235,54 +235,126 @@ button {
 }
 
 /* ==========================================================================
-   🖨️ A4 滿版列印控制樣式 (支援無限項目不突兀切斷)
+   🖨️ 終極優化：強制「全案一頁看完整」A4 列印樣式
    ========================================================================== */
 @page {
     size: A4 portrait;
-    margin: 12mm 15mm 12mm 15mm; /* 微調邊界，給多欄位更多列印空間 */
+    margin: 8mm 10mm 8mm 10mm; /* 縮小 A4 四周邊界，騰出更多垂直空間 */
 }
 
 @media print {
+    /* 1. 隱藏所有不需要列印的按鈕與操作列 */
     button, .action-bar, .deleteCardBtn, .addMemberBtn, .innerAddBtn, .innerDelBtn { 
         display: none !important; 
     }
     
-    body { 
-        background: #ffffff !important; 
-        padding: 0 !important; 
-        margin: 0 !important;
+    /* 2. 核心縮放：強制將網頁整體等比例縮小為 82% 印刷比例，確保一頁能塞下 */
+    html, body {
+        background: #ffffff !important;
         width: 100% !important;
-        font-size: 11pt;
+        height: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: 10pt !important; /* 精簡字型大小 */
     }
 
-    h1 { color: #000 !important; }
+    body {
+        transform: scale(0.82); /* 縮放 82% */
+        transform-origin: top center; /* 以頂部中央為錨點縮放 */
+    }
 
+    h1 { 
+        font-size: 18pt !important; 
+        margin-bottom: 2px !important;
+        color: #000000 !important; 
+    }
+    
+    .dateLine { 
+        margin-bottom: 10px !important; 
+    }
+
+    /* 3. 緊湊化外距與內襯空間 (Margin & Padding) */
     .member-card, .section { 
         border: 1px solid #000000 !important;
-        border-top: 4px solid #000000 !important;
+        border-top: 3px solid #000000 !important;
         box-shadow: none !important; 
-        page-break-inside: avoid; /* 成員卡片在列印時不被切斷 */
-        margin-bottom: 12mm !important;
-        padding: 15px !important;
+        margin-bottom: 6mm !important; /* 壓縮方塊間距 */
+        padding: 10px !important; /* 壓縮內襯 */
         background: #ffffff !important;
+        page-break-inside: avoid; /* 防止卡片內部出現突兀跨頁斷點 */
     }
 
-    .grid-col { background: #ffffff !important; border: 1px dashed #666 !important; }
-    .sub-section { border: 1px solid #ccc !important; margin-bottom: 8px !important; padding: 6px !important; }
-    .nested-row { margin-bottom: 3px !important; }
-    .nested-row input { border: none !important; font-weight: bold; background: transparent !important; }
+    .grid-container {
+        gap: 12px !important; /* 縮小左右欄間距 */
+    }
 
-    .result-section { page-break-inside: avoid; }
+    .grid-col { 
+        background: #ffffff !important; 
+        border: 1px dashed #666 !important; 
+        padding: 8px !important;
+    }
 
-    .totalBox { border: 1px solid #333 !important; background: #f9f9f9 !important; color: #000 !important; }
-    .totalBox.green { border-left: 6px solid #2e7d32 !important; }
-    .totalBox.red { border-left: 6px solid #c62828 !important; }
+    .grid-col h3 {
+        font-size: 9.5pt !important;
+        margin-bottom: 8px !important;
+    }
 
+    .sub-section { 
+        border: 1px solid #ccc !important; 
+        margin-bottom: 4px !important; 
+        padding: 4px 6px !important; 
+    }
+
+    .nested-row { 
+        margin-bottom: 2px !important; 
+    }
+    
+    /* 4. 優化輸入框印出效果：去掉背景與邊框，讓它看起來像打字上去的報表 */
+    .nested-row input, .member-title input { 
+        border: none !important; 
+        font-weight: bold; 
+        background: transparent !important; 
+        padding: 2px !important;
+    }
+
+    .member-summary {
+        margin-top: 8px !important;
+        padding-top: 6px !important;
+        font-size: 9pt !important;
+    }
+
+    /* 5. 總結果區樣式緊湊化 */
+    .result-section {
+        margin-bottom: 0 !important; /* 貼緊底部 */
+        page-break-inside: avoid;
+    }
+
+    .totalBox { 
+        margin-top: 6px !important;
+        padding: 8px !important;
+        font-size: 10.5pt !important;
+        border: 1px solid #333 !important; 
+        background: #f9f9f9 !important; 
+        color: #000 !important; 
+    }
+    .totalBox.green { border-left: 5px solid #2e7d32 !important; }
+    .totalBox.red { border-left: 5px solid #c62828 !important; }
+
+    .result {
+        padding: 6px !important;
+        font-size: 9pt !important;
+        margin-top: 4px !important;
+    }
+
+    /* 6. 合格章定位：在縮放後的結構中，更精準貼在結果區旁邊 */
     .stamp { 
         position: absolute !important; 
-        top: 200mm; 
-        left: 50%;
-        transform: translate(-50%, -50%) rotate(-12deg);
+        top: auto !important;
+        bottom: 25mm !important; /* 改從底部回推固定距離 */
+        left: 75% !important; /* 移到右下角，避免遮擋核心數據 */
+        font-size: 55px !important;
+        padding: 10px 25px !important;
+        border-width: 5px !important;
         opacity: 0.25 !important;
     }
 }
