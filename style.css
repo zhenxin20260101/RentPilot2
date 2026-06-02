@@ -85,7 +85,7 @@ select {
     width: 150px;
 }
 
-/* 電腦版左右橫式並排 */
+/* 電腦版橫式兩欄佈局 */
 .grid-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -102,45 +102,84 @@ select {
 .grid-col h3 {
     font-size: 1.05rem;
     color: #37474f;
-    margin-bottom: 12px;
+    margin-bottom: 15px;
     border-left: 4px solid #1976d2;
     padding-left: 8px;
 }
 
-.form-group {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-    gap: 10px;
-}
-
-.form-group label {
-    width: 120px; /* 稍微加寬容納備註 */
-    font-size: 0.95rem;
-    color: #555;
-}
-
-.form-group label small {
-    display: block;
-    color: #888;
-    font-size: 0.75rem;
-}
-
-.form-group input {
-    flex: 1;
-    padding: 8px 12px;
-    border: 1px solid #cfd8dc;
+/* 細項區塊排版 */
+.sub-section {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
     border-radius: 6px;
-    font-size: 0.95rem;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+}
+
+.section-label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #455a64;
+    margin-bottom: 6px;
+}
+
+.section-label small {
+    font-weight: normal;
+    color: #78909c;
+}
+
+.list-container {
+    margin-bottom: 5px;
+}
+
+/* 巢狀細項單行 */
+.nested-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 6px;
+    align-items: center;
+}
+
+.nested-row input {
+    flex: 1;
+    padding: 6px 10px;
+    border: 1px solid #cfd8dc;
+    border-radius: 4px;
+    font-size: 0.9rem;
     text-align: right;
 }
 
-/* 負數警告紅框 */
-.form-group input.invalid-negative {
+/* 負數警告 */
+.nested-row input.invalid-negative {
     border-color: #e53935;
     background-color: #ffebee;
 }
 
+/* 卡片內層新增/刪除小按鈕 */
+.innerAddBtn {
+    background: #f0f4f8;
+    color: #1976d2;
+    padding: 4px 10px;
+    font-size: 0.8rem;
+    border: 1px dashed #1976d2;
+    width: 100%;
+    text-align: center;
+    border-radius: 4px;
+    margin-top: 2px;
+}
+.innerAddBtn:hover { background: #e1f5fe; }
+
+.innerDelBtn {
+    background: #cfd8dc;
+    color: #37474f;
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    border-radius: 4px;
+}
+.innerDelBtn:hover { background: #b0bec5; color: #fff; }
+
+/* 個人小計區 */
 .member-summary {
     margin-top: 15px;
     padding-top: 12px;
@@ -152,7 +191,7 @@ select {
     font-weight: bold;
 }
 
-/* 按鈕 */
+/* 系統主要按鈕 */
 button {
     border: none;
     border-radius: 6px;
@@ -160,6 +199,7 @@ button {
     padding: 10px 16px;
     font-size: 0.95rem;
     font-weight: 500;
+    transition: background 0.2s;
 }
 
 .addMemberBtn { background: #1976d2; color: white; font-size: 1rem; box-shadow: 0 4px 10px rgba(25, 118, 210, 0.3); }
@@ -185,7 +225,7 @@ button {
 .stamp.pass { color: #2e7d32; border-color: #2e7d32; }
 .stamp.fail { color: #c62828; border-color: #c62828; }
 
-/* RWD 手機優化 */
+/* RWD 行動裝置優化 */
 @media (max-width: 768px) {
     body { padding: 10px; }
     .grid-container { grid-template-columns: 1fr; gap: 15px; }
@@ -195,70 +235,54 @@ button {
 }
 
 /* ==========================================================================
-   🖨️ 專業 A4 滿版列印最佳化樣式
+   🖨️ A4 滿版列印控制樣式 (支援無限項目不突兀切斷)
    ========================================================================== */
 @page {
-    size: A4 portrait; /* 強制設定 A4 直式紙張 */
-    margin: 15mm 15mm 15mm 15mm; /* 標準公務報表邊界，留出合適空隙 */
+    size: A4 portrait;
+    margin: 12mm 15mm 12mm 15mm; /* 微調邊界，給多欄位更多列印空間 */
 }
 
 @media print {
-    /* 隱藏所有操作性 UI 按鈕 */
-    button, .action-bar, .deleteCardBtn, .addMemberBtn { 
+    button, .action-bar, .deleteCardBtn, .addMemberBtn, .innerAddBtn, .innerDelBtn { 
         display: none !important; 
     }
     
-    /* 調整背景與外距，強制滿版寬度 */
     body { 
         background: #ffffff !important; 
         padding: 0 !important; 
         margin: 0 !important;
         width: 100% !important;
-        font-size: 12pt; /* 使用印刷標準級字級 */
+        font-size: 11pt;
     }
 
-    h1 {
-        font-size: 22pt;
-        margin-bottom: 5px;
-        color: #000000 !important; /* 列印省墨轉純黑 */
-    }
+    h1 { color: #000 !important; }
 
-    /* 卡片與結果區塊轉為精緻黑白印刷邊框，防斷頁 */
     .member-card, .section { 
         border: 1px solid #000000 !important;
         border-top: 4px solid #000000 !important;
         box-shadow: none !important; 
-        page-break-inside: avoid; /* 防範單個成員卡片被腰斬截斷到下一頁 */
-        margin-bottom: 15mm !important;
+        page-break-inside: avoid; /* 成員卡片在列印時不被切斷 */
+        margin-bottom: 12mm !important;
         padding: 15px !important;
         background: #ffffff !important;
     }
 
-    .grid-col {
-        background: #ffffff !important;
-        border: 1px dashed #666 !important;
-    }
+    .grid-col { background: #ffffff !important; border: 1px dashed #666 !important; }
+    .sub-section { border: 1px solid #ccc !important; margin-bottom: 8px !important; padding: 6px !important; }
+    .nested-row { margin-bottom: 3px !important; }
+    .nested-row input { border: none !important; font-weight: bold; background: transparent !important; }
 
-    /* 總結果區強制放在卡片群後方，若空間不夠自動整塊至次頁 */
-    .result-section {
-        page-break-inside: avoid;
-    }
+    .result-section { page-break-inside: avoid; }
 
-    /* 調整列印色調，確保黑白印表機也能清晰閱讀 */
-    .totalBox {
-        border: 1px solid #333 !important;
-        background: #f9f9f9 !important;
-        color: #000000 !important;
-    }
+    .totalBox { border: 1px solid #333 !important; background: #f9f9f9 !important; color: #000 !important; }
     .totalBox.green { border-left: 6px solid #2e7d32 !important; }
     .totalBox.red { border-left: 6px solid #c62828 !important; }
 
-    /* 合格章絕對定位，優雅呈現在 A4 頁面的後半部指定區 */
     .stamp { 
         position: absolute !important; 
-        top: 180mm; /* 約落在第一頁中下段 */
+        top: 200mm; 
         left: 50%;
         transform: translate(-50%, -50%) rotate(-12deg);
-        opacity: 0.25 !important; /* 稍微加深避免列印不出來 */
+        opacity: 0.25 !important;
     }
 }
