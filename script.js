@@ -58,7 +58,7 @@ function addMemberCard() {
                 </div>
 
                 <div class="sub-section">
-                    <label class="section-label">存款本金 / 其他動產 <small>(直接加總不回推)</small></label>
+                    <label class="section-label">其他動產 <small>(直接加總不回推)</small></label>
                     <div class="list-container" id="other_list_${memberCounter}"></div>
                     <button class="innerAddBtn" onclick="addNestedInput('other_list_${memberCounter}', 'val-other', '其他動產')">➕ 增加其他收入</button>
                 </div>
