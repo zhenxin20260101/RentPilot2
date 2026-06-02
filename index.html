@@ -1,371 +1,51 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>鎮信安東房客試算表</title>
-
-<style>
-*{
-    box-sizing:border-box;
-}
-
-body{
-    font-family:"Microsoft JhengHei",sans-serif;
-    max-width:1200px;
-    margin:auto;
-    padding:20px;
-    background:#eef5ff;
-}
-
-h1{
-    text-align:center;
-    color:#0d47a1;
-    margin-bottom:10px;
-}
-
-.dateLine{
-    text-align:center;
-    margin-bottom:20px;
-    color:#333;
-}
-
-.section{
-    background:#fff;
-    border-radius:12px;
-    padding:20px;
-    margin-bottom:20px;
-    box-shadow:0 2px 8px rgba(0,0,0,.08);
-    border-top:4px solid #1976d2;
-}
-
-h2{
-    color:#1565c0;
-}
-
-.row{
-    display:flex;
-    gap:10px;
-    margin-bottom:10px;
-    align-items:center;
-    flex-wrap:wrap;
-}
-
-input, select{
-    padding:10px;
-    border:1px solid #cfd8dc;
-    border-radius:6px;
-    font-size:16px;
-}
-
-button{
-    border:none;
-    border-radius:6px;
-    cursor:pointer;
-    padding:10px 15px;
-    font-size:14px;
-}
-
-.addBtn{
-    background:#1976d2;
-    color:white;
-}
-
-.deleteBtn{
-    background:#e53935;
-    color:white;
-}
-
-.printBtn{
-    background:#2e7d32;
-    color:white;
-    font-size:16px;
-}
-
-.totalBox{
-    margin-top:10px;
-    padding:12px;
-    border-radius:8px;
-    font-size:20px;
-    font-weight:bold;
-}
-
-.green{background:#e8f5e9;color:#2e7d32;}
-.red{background:#ffebee;color:#c62828;}
-
-.result{
-    margin-top:10px;
-    padding:12px;
-    border-radius:8px;
-    font-weight:bold;
-}
-
-.pass{background:#e8f5e9;color:#2e7d32;}
-.fail{background:#ffebee;color:#c62828;}
-
-/* 印章 */
-.stamp{
-    position:fixed;
-    top:40%;
-    left:50%;
-    transform:translate(-50%,-50%) rotate(-15deg);
-    font-size:80px;
-    font-weight:bold;
-    padding:30px 50px;
-    border:8px solid;
-    border-radius:20px;
-    opacity:0.25;
-    pointer-events:none;
-    display:none;
-    z-index:9999;
-}
-
-.stamp.pass{
-    color:#2e7d32;
-    border-color:#2e7d32;
-}
-
-.stamp.fail{
-    color:#c62828;
-    border-color:#c62828;
-}
-
-/* 手機 */
-@media (max-width:768px){
-
-    body{padding:10px;}
-
-    .row{
-        flex-direction:column;
-        align-items:stretch;
-    }
-
-    input,select,button{
-        width:100%;
-    }
-
-    .totalBox{font-size:18px;}
-}
-
-/* 列印 */
-@media print{
-
-    button{display:none !important;}
-
-    body{background:white;}
-
-    .section{
-        box-shadow:none;
-        border:1px solid #ccc;
-        page-break-inside:avoid;
-    }
-
-    .stamp{
-        position:fixed;
-    }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鎮信安東房客資格試算系統</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<h1>鎮信安東房客試算表</h1>
+    <h1>鎮信安東房客試算表</h1>
 
-<div class="dateLine">
-試算日期：<span id="today"></span>
-</div>
+    <div class="dateLine">
+        試算日期：<span id="today"></span>
+    </div>
 
-<div style="text-align:center;margin-bottom:20px;">
-<button class="printBtn" onclick="printPage()">🖨️ 列印試算表</button>
-</div>
+    <div class="action-bar">
+        <button class="printBtn" onclick="printPage()">🖨️ 列印試算表</button>
+    </div>
 
-<div class="section">
+    <div class="section shadow-box">
+        <h2>審查縣市</h2>
+        <select id="city" onchange="calculateAll()">
+            <option value="桃園市">桃園市</option>
+            <option value="南投縣">南投縣</option>
+            <option value="彰化縣">彰化縣</option>
+        </select>
+    </div>
 
-<h2>縣市</h2>
-<select id="city" onchange="calculate()">
-<option value="桃園市">桃園市</option>
-<option value="南投縣">南投縣</option>
-<option value="彰化縣">彰化縣</option>
-</select>
+    <div id="membersContainer"></div>
 
-</div>
+    <div class="action-bar" style="margin-top: 10px;">
+        <button class="addMemberBtn" onclick="addMemberCard()">➕ 新增家庭成員 / 共同承租人</button>
+    </div>
 
-<div class="section">
-<h2>承租人</h2>
-<div id="tenantContainer"></div>
-<button class="addBtn" onclick="addTenant()">➕新增承租人</button>
-</div>
+    <div class="section result-section shadow-box">
+        <h2>全戶資格審查總結果</h2>
+        <div id="avgIncome" class="totalBox gray">全戶平均每人月收入：0 元</div>
+        <div id="assetTotal" class="totalBox gray">全戶動產總額：0 元</div>
+        <div id="propertyTotal" class="totalBox gray">全戶不動產總額：0 元</div>
 
-<div class="section">
-<h2>年收入</h2>
-<div id="incomeContainer"></div>
-<button class="addBtn" onclick="addIncome()">➕新增</button>
-</div>
+        <div id="incomeResult"></div>
+        <div id="assetResult"></div>
+        <div id="propertyResult"></div>
+    </div>
 
-<div class="section">
-<h2>利息收入</h2>
-<div id="interestContainer"></div>
-<button class="addBtn" onclick="addInterest()">➕新增</button>
-</div>
+    <div id="stamp" class="stamp"></div>
 
-<div class="section">
-<h2>競技收入</h2>
-<div id="gameContainer"></div>
-<button class="addBtn" onclick="addGame()">➕新增</button>
-</div>
-
-<div class="section">
-<h2>其他收入</h2>
-<div id="otherContainer"></div>
-<button class="addBtn" onclick="addOther()">➕新增</button>
-</div>
-
-<div class="section">
-<h2>土地現值</h2>
-<div id="landContainer"></div>
-<button class="addBtn" onclick="addLand()">➕新增</button>
-</div>
-
-<div class="section">
-<h2>房屋現值</h2>
-<div id="houseContainer"></div>
-<button class="addBtn" onclick="addHouse()">➕新增</button>
-</div>
-
-<div class="section">
-<h2>結果</h2>
-
-<div id="avgIncome" class="totalBox"></div>
-<div id="assetTotal" class="totalBox"></div>
-<div id="propertyTotal" class="totalBox"></div>
-
-<div id="incomeResult"></div>
-<div id="assetResult"></div>
-<div id="propertyResult"></div>
-
-</div>
-
-<div id="stamp" class="stamp"></div>
-
-<script>
-
-document.getElementById("today").innerText =
-new Date().toLocaleDateString("zh-TW");
-
-function printPage(){
-    window.print();
-}
-
-function removeRow(btn){
-    btn.parentElement.remove();
-    calculate();
-}
-
-function addTenant(){
-    let div=document.createElement("div");
-    div.className="row";
-    div.innerHTML=`
-        <input placeholder="姓名">
-        <input placeholder="身分證">
-        <button class="deleteBtn" onclick="removeRow(this)">刪除</button>
-    `;
-    tenantContainer.appendChild(div);
-    calculate();
-}
-
-function addInput(container){
-    let div=document.createElement("div");
-    div.className="row";
-    div.innerHTML=`
-        <input type="number" value="0" onchange="calculate()">
-        <button class="deleteBtn" onclick="removeRow(this)">刪除</button>
-    `;
-    document.getElementById(container).appendChild(div);
-    calculate();
-}
-
-function addIncome(){addInput("incomeContainer")}
-function addInterest(){addInput("interestContainer")}
-function addGame(){addInput("gameContainer")}
-function addOther(){addInput("otherContainer")}
-function addLand(){addInput("landContainer")}
-function addHouse(){addInput("houseContainer")}
-
-function sum(id){
-    let total=0;
-    document.querySelectorAll("#"+id+" input").forEach(i=>{
-        total+=Number(i.value)||0;
-    });
-    return total;
-}
-
-function calculate(){
-
-    let city=document.getElementById("city").value;
-
-    let incomeLimit=city==="桃園市"?58688:54303;
-    let assetLimit=city==="桃園市"?4790000:3330000;
-    let propertyLimit=city==="桃園市"?6630000:5600000;
-
-    let tenantCount=document.querySelectorAll("#tenantContainer .row").length||1;
-
-    let annual=sum("incomeContainer");
-    let avg=annual/12/tenantCount;
-
-    let interest=sum("interestContainer");
-    let principal=interest/0.01035;
-
-    let asset=principal+sum("gameContainer")+sum("otherContainer");
-
-    let property=sum("landContainer")+sum("houseContainer");
-
-    document.getElementById("avgIncome").innerText=
-    "平均月收入："+Math.round(avg).toLocaleString()+" 元";
-
-    document.getElementById("assetTotal").innerText=
-    "動產總額："+Math.round(asset).toLocaleString()+" 元";
-
-    document.getElementById("propertyTotal").innerText=
-    "不動產總額："+Math.round(property).toLocaleString()+" 元";
-
-    let incomeOK=avg<=incomeLimit;
-    let assetOK=asset<=assetLimit;
-    let propertyOK=property<=propertyLimit;
-
-    showResult("incomeResult",incomeOK,"平均月收入",incomeLimit);
-    showResult("assetResult",assetOK,"動產",assetLimit);
-    showResult("propertyResult",propertyOK,"不動產",propertyLimit);
-
-    let stamp=document.getElementById("stamp");
-
-    if(incomeOK&&assetOK&&propertyOK){
-        stamp.style.display="block";
-        stamp.className="stamp pass";
-        stamp.innerText="符合資格";
-    }else{
-        stamp.style.display="block";
-        stamp.className="stamp fail";
-        stamp.innerText="不符合資格";
-    }
-}
-
-function showResult(id,ok,title,limit){
-    document.getElementById(id).innerHTML=
-    ok
-    ?`<div class="result pass">✓ ${title}符合</div>`
-    :`<div class="result fail">✗ ${title}超標（上限 ${limit.toLocaleString()}）</div>`;
-}
-
-addTenant();
-addIncome();
-addInterest();
-addGame();
-addOther();
-addLand();
-addHouse();
-calculate();
-
-</script>
-
+    <script src="script.js"></script>
 </body>
 </html>
