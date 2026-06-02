@@ -1,0 +1,264 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Helvetica Neue", Arial, "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    max-width: 1100px;
+    margin: auto;
+    padding: 30px 20px;
+    background: #f4f7fc;
+    color: #333;
+    line-height: 1.5;
+}
+
+h1 {
+    text-align: center;
+    color: #0d47a1;
+    margin-bottom: 5px;
+}
+
+.dateLine {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #666;
+    font-size: 0.95rem;
+}
+
+.action-bar {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.shadow-box {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #cfd8dc;
+    border-radius: 6px;
+    font-size: 1rem;
+    outline: none;
+}
+
+/* 承租人卡片 */
+.member-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+    border-top: 5px solid #1976d2;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.member-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 12px;
+    margin-bottom: 15px;
+}
+
+.member-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #1565c0;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.member-title input {
+    font-size: 1rem;
+    padding: 5px 10px;
+    border: 1px solid #cfd8dc;
+    border-radius: 4px;
+    width: 150px;
+}
+
+/* 電腦版左右橫式並排 */
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.grid-col {
+    background: #fafafa;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #eef2f5;
+}
+
+.grid-col h3 {
+    font-size: 1.05rem;
+    color: #37474f;
+    margin-bottom: 12px;
+    border-left: 4px solid #1976d2;
+    padding-left: 8px;
+}
+
+.form-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    gap: 10px;
+}
+
+.form-group label {
+    width: 120px; /* 稍微加寬容納備註 */
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.form-group label small {
+    display: block;
+    color: #888;
+    font-size: 0.75rem;
+}
+
+.form-group input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #cfd8dc;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    text-align: right;
+}
+
+/* 負數警告紅框 */
+.form-group input.invalid-negative {
+    border-color: #e53935;
+    background-color: #ffebee;
+}
+
+.member-summary {
+    margin-top: 15px;
+    padding-top: 12px;
+    border-top: 1px dashed #ccc;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.95rem;
+    color: #455a64;
+    font-weight: bold;
+}
+
+/* 按鈕 */
+button {
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    padding: 10px 16px;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.addMemberBtn { background: #1976d2; color: white; font-size: 1rem; box-shadow: 0 4px 10px rgba(25, 118, 210, 0.3); }
+.deleteCardBtn { background: #e53935; color: white; padding: 6px 12px; font-size: 0.85rem; }
+.printBtn { background: #2e7d32; color: white; font-size: 1rem; }
+
+/* 總結果區 */
+.totalBox { margin-top: 12px; padding: 14px; border-radius: 8px; font-size: 1.15rem; font-weight: bold; }
+.gray { background: #f5f5f5; color: #424242; border-left: 5px solid #9e9e9e; }
+.green { background: #e8f5e9; color: #2e7d32; border-left: 5px solid #2e7d32; }
+.red { background: #ffebee; color: #c62828; border-left: 5px solid #c62828; }
+
+.result { margin-top: 10px; padding: 12px; border-radius: 6px; font-weight: bold; }
+.result.pass { background: #e8f5e9; color: #2e7d32; }
+.result.fail { background: #ffebee; color: #c62828; }
+
+/* 印章 */
+.stamp {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg);
+    font-size: 70px; font-weight: 900; padding: 20px 40px; border: 8px solid; border-radius: 16px;
+    opacity: 0.15; pointer-events: none; display: none; z-index: 9999;
+}
+.stamp.pass { color: #2e7d32; border-color: #2e7d32; }
+.stamp.fail { color: #c62828; border-color: #c62828; }
+
+/* RWD 手機優化 */
+@media (max-width: 768px) {
+    body { padding: 10px; }
+    .grid-container { grid-template-columns: 1fr; gap: 15px; }
+    .member-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .deleteCardBtn { width: 100%; text-align: center; }
+    .member-summary { flex-direction: column; gap: 5px; }
+}
+
+/* ==========================================================================
+   🖨️ 專業 A4 滿版列印最佳化樣式
+   ========================================================================== */
+@page {
+    size: A4 portrait; /* 強制設定 A4 直式紙張 */
+    margin: 15mm 15mm 15mm 15mm; /* 標準公務報表邊界，留出合適空隙 */
+}
+
+@media print {
+    /* 隱藏所有操作性 UI 按鈕 */
+    button, .action-bar, .deleteCardBtn, .addMemberBtn { 
+        display: none !important; 
+    }
+    
+    /* 調整背景與外距，強制滿版寬度 */
+    body { 
+        background: #ffffff !important; 
+        padding: 0 !important; 
+        margin: 0 !important;
+        width: 100% !important;
+        font-size: 12pt; /* 使用印刷標準級字級 */
+    }
+
+    h1 {
+        font-size: 22pt;
+        margin-bottom: 5px;
+        color: #000000 !important; /* 列印省墨轉純黑 */
+    }
+
+    /* 卡片與結果區塊轉為精緻黑白印刷邊框，防斷頁 */
+    .member-card, .section { 
+        border: 1px solid #000000 !important;
+        border-top: 4px solid #000000 !important;
+        box-shadow: none !important; 
+        page-break-inside: avoid; /* 防範單個成員卡片被腰斬截斷到下一頁 */
+        margin-bottom: 15mm !important;
+        padding: 15px !important;
+        background: #ffffff !important;
+    }
+
+    .grid-col {
+        background: #ffffff !important;
+        border: 1px dashed #666 !important;
+    }
+
+    /* 總結果區強制放在卡片群後方，若空間不夠自動整塊至次頁 */
+    .result-section {
+        page-break-inside: avoid;
+    }
+
+    /* 調整列印色調，確保黑白印表機也能清晰閱讀 */
+    .totalBox {
+        border: 1px solid #333 !important;
+        background: #f9f9f9 !important;
+        color: #000000 !important;
+    }
+    .totalBox.green { border-left: 6px solid #2e7d32 !important; }
+    .totalBox.red { border-left: 6px solid #c62828 !important; }
+
+    /* 合格章絕對定位，優雅呈現在 A4 頁面的後半部指定區 */
+    .stamp { 
+        position: absolute !important; 
+        top: 180mm; /* 約落在第一頁中下段 */
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-12deg);
+        opacity: 0.25 !important; /* 稍微加深避免列印不出來 */
+    }
+}
