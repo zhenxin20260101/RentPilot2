@@ -18,7 +18,7 @@ document.getElementById("today").innerText = new Date().toLocaleDateString("zh-T
 
 let memberCounter = 0;
 
-// 動態新增成員填寫卡片 (電腦版自動橫式並排)
+// 動態新增成員填寫卡片 (各細項皆改為動態動態列表結構)
 function addMemberCard() {
     memberCounter++;
     let container = document.getElementById("membersContainer");
@@ -38,33 +38,45 @@ function addMemberCard() {
         <div class="grid-container">
             <div class="grid-col">
                 <h3>動產與所得</h3>
-                <div class="form-group">
-                    <label>年收入總額<small>(年度綜合所得)</small></label>
-                    <input type="number" class="val-income" value="0" min="0" oninput="validateAndCalculate(this)">
+                
+                <div class="sub-section">
+                    <label class="section-label">綜合年收入總額 <small>(年度薪資、營利等)</small></label>
+                    <div class="list-container" id="income_list_${memberCounter}"></div>
+                    <button class="innerAddBtn" onclick="addNestedInput('income_list_${memberCounter}', 'val-income', '年收入金額')">➕ 增加年收入</button>
                 </div>
-                <div class="form-group">
-                    <label>年利息所得<small>(稅籍清單利息)</small></label>
-                    <input type="number" class="val-interest" value="0" min="0" oninput="validateAndCalculate(this)">
+
+                <div class="sub-section">
+                    <label class="section-label">年利息所得 <small>(將依儲金利率回推本金)</small></label>
+                    <div class="list-container" id="interest_list_${memberCounter}"></div>
+                    <button class="innerAddBtn" onclick="addNestedInput('interest_list_${memberCounter}', 'val-interest', '利息所得')">➕ 增加利息收入</button>
                 </div>
-                <div class="form-group">
-                    <label>競技中獎所得<small>(機會中獎稅額)</small></label>
-                    <input type="number" class="val-game" value="0" min="0" oninput="validateAndCalculate(this)">
+
+                <div class="sub-section">
+                    <label class="section-label">競技競賽機會中獎所得</label>
+                    <div class="list-container" id="game_list_${memberCounter}"></div>
+                    <button class="innerAddBtn" onclick="addNestedInput('game_list_${memberCounter}', 'val-game', '中獎金額')">➕ 增加競技收入</button>
                 </div>
-                <div class="form-group">
-                    <label>存款本金 / 其他<small>(直接加總不回推)</small></label>
-                    <input type="number" class="val-other" value="0" min="0" oninput="validateAndCalculate(this)">
+
+                <div class="sub-section">
+                    <label class="section-label">存款本金 / 其他動產 <small>(直接加總不回推)</small></label>
+                    <div class="list-container" id="other_list_${memberCounter}"></div>
+                    <button class="innerAddBtn" onclick="addNestedInput('other_list_${memberCounter}', 'val-other', '其他動產')">➕ 增加其他收入</button>
                 </div>
             </div>
             
             <div class="grid-col">
                 <h3>不動產現值</h3>
-                <div class="form-group">
-                    <label>土地現值<small>(公告土地現值)</small></label>
-                    <input type="number" class="val-land" value="0" min="0" oninput="validateAndCalculate(this)">
+                
+                <div class="sub-section">
+                    <label class="section-label">土地現值 <small>(公告土地現值)</small></label>
+                    <div class="list-container" id="land_list_${memberCounter}"></div>
+                    <button class="innerAddBtn" onclick="addNestedInput('land_list_${memberCounter}', 'val-land', '土地現值')">➕ 增加土地</button>
                 </div>
-                <div class="form-group">
-                    <label>房屋現值<small>(評定現值)</small></label>
-                    <input type="number" class="val-house" value="0" min="0" oninput="validateAndCalculate(this)">
+
+                <div class="sub-section">
+                    <label class="section-label">房屋現值 <small>(評定現值)</small></label>
+                    <div class="list-container" id="house_list_${memberCounter}"></div>
+                    <button class="innerAddBtn" onclick="addNestedInput('house_list_${memberCounter}', 'val-house', '房屋現值')">➕ 增加房屋</button>
                 </div>
             </div>
         </div>
@@ -76,10 +88,38 @@ function addMemberCard() {
     `;
     
     container.appendChild(card);
+    
+    // 初始化時，幫每個細項預設各敲出一個輸入框，方便經辦直接填寫
+    addNestedInput(`income_list_${memberCounter}`, 'val-income', '年收入金額');
+    addNestedInput(`interest_list_${memberCounter}`, 'val-interest', '利息所得');
+    addNestedInput(`game_list_${memberCounter}`, 'val-game', '中獎金額');
+    addNestedInput(`other_list_${memberCounter}`, 'val-other', '其他動產');
+    addNestedInput(`land_list_${memberCounter}`, 'val-land', '土地現值');
+    addNestedInput(`house_list_${memberCounter}`, 'val-house', '房屋現值');
+
     calculateAll();
 }
 
-// 刪除成員卡片
+// 卡片內層細項的動態新增函式 (帶有刪除按鈕)
+function addNestedInput(listContainerId, className, placeholderText) {
+    let listContainer = document.getElementById(listContainerId);
+    let div = document.createElement("div");
+    div.className = "nested-row";
+    div.innerHTML = `
+        <input type="number" class="${className}" value="0" min="0" placeholder="${placeholderText}" oninput="validateAndCalculate(this)">
+        <button class="innerDelBtn" onclick="removeNestedRow(this)">✕</button>
+    `;
+    listContainer.appendChild(div);
+    calculateAll();
+}
+
+// 刪除內部細項欄位
+function removeNestedRow(btn) {
+    btn.parentElement.remove();
+    calculateAll();
+}
+
+// 刪除成員大卡片
 function removeMemberCard(cardId) {
     let cards = document.querySelectorAll(".member-card");
     if (cards.length <= 1) {
@@ -91,7 +131,7 @@ function removeMemberCard(cardId) {
     calculateAll();
 }
 
-// 重新編排成員順序
+// 重新編排成員順序編號
 function reindexMembers() {
     let cards = document.querySelectorAll(".member-card");
     cards.forEach((card, index) => {
@@ -99,25 +139,31 @@ function reindexMembers() {
     });
 }
 
-// 介面值防負數與即時連動機制
+// 介面數值防負數警告連動
 function validateAndCalculate(inputEl) {
     let val = Number(inputEl.value);
-    
-    // 防負數：如果輸入負數，即時加上警告紅框樣式
     if (val < 0) {
         inputEl.classList.add("invalid-negative");
     } else {
         inputEl.classList.remove("invalid-negative");
     }
-    
     calculateAll();
+}
+
+// 通用多欄位加總輔助工具 (包含防負數阻斷機制)
+function sumNestedFields(cardEl, selector) {
+    let sum = 0;
+    cardEl.querySelectorAll(selector).forEach(input => {
+        let val = Number(input.value) || 0;
+        sum += Math.max(0, val); // 負數強制當 0
+    });
+    return sum;
 }
 
 // 核心精算與全戶結果統計
 function calculateAll() {
     let city = document.getElementById("city").value;
     
-    // 讀取外部化標準物件
     let currentStandard = CONFIG.STANDARDS[city] || CONFIG.STANDARDS["桃園市"];
     let incomeLimit = currentStandard.incomeLimit;
     let assetLimit = currentStandard.assetLimit;
@@ -131,15 +177,15 @@ function calculateAll() {
     let totalHouseholdProperty = 0;
 
     cards.forEach(card => {
-        // 利用 Math.max(0, ...) 強制阻斷負數參與運算，確保公式精確度
-        let income   = Math.max(0, Number(card.querySelector(".val-income").value) || 0);
-        let interest = Math.max(0, Number(card.querySelector(".val-interest").value) || 0);
-        let game     = Math.max(0, Number(card.querySelector(".val-game").value) || 0);
-        let other    = Math.max(0, Number(card.querySelector(".val-other").value) || 0);
-        let land     = Math.max(0, Number(card.querySelector(".val-land").value) || 0);
-        let house    = Math.max(0, Number(card.querySelector(".val-house").value) || 0);
+        // 利用通用加總函式，分別將各自區塊內「所有新增欄位」進行加總
+        let income   = sumNestedFields(card, ".val-income");
+        let interest = sumNestedFields(card, ".val-interest");
+        let game     = sumNestedFields(card, ".val-game");
+        let other    = sumNestedFields(card, ".val-other");
+        let land     = sumNestedFields(card, ".val-land");
+        let house    = sumNestedFields(card, ".val-house");
 
-        // 精確度計算：利息回推本金，避免因浮點數失真，回推結果取四捨五入整數
+        // 精確度計算：所有利息加總後，依儲金利率回推本金
         let principalFromInterest = 0;
         if (interest > 0 && CONFIG.INTEREST_RATE > 0) {
             principalFromInterest = Math.round(interest / CONFIG.INTEREST_RATE);
@@ -148,30 +194,26 @@ function calculateAll() {
         let personalAsset = principalFromInterest + game + other;
         let personalProperty = land + house;
 
-        // 更新卡片小計
+        // 更新此卡片的個人小計文字
         card.querySelector(".sub-asset").innerText = `個人動產小計：${Math.round(personalAsset).toLocaleString()} 元`;
         card.querySelector(".sub-property").innerText = `個人不動產小計：${Math.round(personalProperty).toLocaleString()} 元`;
 
-        // 彙整全戶總額
+        // 彙整到全戶總額中
         totalHouseholdIncome += income;
         totalHouseholdAsset += personalAsset;
         totalHouseholdProperty += personalProperty;
     });
 
     // 全戶平均每人月收入 = 全戶年所得總額 / 12個月 / 全戶總審查人口數
-    let avgMonthlyIncome = totalHouseholdIncome / 12 / totalMembers;
-
-    // 四捨五入處理，排除浮點數小數點漏洞
-    avgMonthlyIncome = Math.round(avgMonthlyIncome);
+    let avgMonthlyIncome = Math.round(totalHouseholdIncome / 12 / totalMembers);
     totalHouseholdAsset = Math.round(totalHouseholdAsset);
     totalHouseholdProperty = Math.round(totalHouseholdProperty);
 
-    // 渲染 UI 統計面板
+    // 渲染 UI 總統計面板
     updateBoxDisplay("avgIncome", `全戶平均每人月收入：${avgMonthlyIncome.toLocaleString()} 元`, avgMonthlyIncome <= incomeLimit);
     updateBoxDisplay("assetTotal", `全戶動產總額：${totalHouseholdAsset.toLocaleString()} 元`, totalHouseholdAsset <= assetLimit);
     updateBoxDisplay("propertyTotal", `全戶不動產總額：${totalHouseholdProperty.toLocaleString()} 元`, totalHouseholdProperty <= propertyLimit);
 
-    // 核對資格狀態
     let incomeOK = avgMonthlyIncome <= incomeLimit;
     let assetOK = totalHouseholdAsset <= assetLimit;
     let propertyOK = totalHouseholdProperty <= propertyLimit;
@@ -199,7 +241,6 @@ function updateBoxDisplay(id, text, isOK) {
     el.className = "totalBox " + (isOK ? "green" : "red");
 }
 
-// 顯示上限提醒文字
 function showResultText(id, ok, title, limit) {
     document.getElementById(id).innerHTML = ok
         ? `<div class="result pass">✓ ${title} 符合標準</div>`
@@ -210,7 +251,7 @@ function printPage() {
     window.print();
 }
 
-// 開啟網頁時自動建置第 1 位審查人
+// 網頁開啟初始化
 window.onload = function() {
     addMemberCard();
 };
